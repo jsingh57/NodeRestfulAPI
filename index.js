@@ -29,21 +29,49 @@ var server    = http.createServer(function(req,res){
   req.on('data',function(data){
     buffer+=decoder.write(data);
   });
-  //on data stream end call your termination logic
-  req.on('end',function(){
+  //on data stream end call your termination logic and process the routing
+    req.on('end',function(){
     buffer += decoder.end();
-
+    //choose req router;
+    var reqRouter = typeof(router[trimpath])!=='undefined'? router[trimpath] : handlers.notFound;
+    console.log(reqRouter);
+    var data = {
+      'trimpath': trimpath,
+      'method' : method,
+      'queryStringObj':queryStringObj,
+      'headers':headers,
+      'payload':buffer
+    };
+    reqRouter(data,function(statusCode,payload){
+          //defaulting the statusCode
+        statusCode =typeof(statusCode)=='number'? statusCode :200;
+          //defaultig the payload
+        payload = typeof(payload) =='object'? payload : {};
+         // Stringify the payload into string
+        var payloadString = JSON.stringify(payload);
+        res.writeHead(statusCode);
+        res.end(payloadString);
+        console.log('We are sending response ',statusCode, payloadString);
+        }) ;
+   });
    //output logs
-  res.end('Hello World \n');
-  console.log(buffer);
+
    //console.log(headers);
    //console.log('-----------------------');
    //console.log(' path requested is path:- ',trimpath,' , method :- ',method,',  query from url is :- ',queryStringObj);
-  });
-
 });
+//define handlers
+var handlers={};
+handlers.main = function(data,callback){
+callback(406,{'name': 'main handler'});
+};
+//default handler
+handlers.notFound = function(data,callback){
+callback(404);
+};
+//create a router
+var router = {'main': handlers.main};
 
 server.listen(3000,function(){
 console.log('hey i am listening to port 3000');
-
 });

@@ -3,6 +3,7 @@
 var http  = require('http');
 var url = require ('url');
 var StringDecoder = require('string_decoder').StringDecoder;
+var config = require('./config');
 
 
 //create your server Request
@@ -74,6 +75,6 @@ callback(404);
 //create a router
 var router = {'main': handlers.main};
 
-server.listen(3000,function(){
-console.log('hey i am listening to port 3000');
+server.listen(config.port,function(){
+console.log('hey i am listening to port '+ config.port+ 'for '+config.envName);
 });

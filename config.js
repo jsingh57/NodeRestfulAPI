@@ -6,13 +6,15 @@ Configuration Script
 var environments = {};
 
 environments.staging= {
-  'port'    : 3000,
-  'envName' : 'Stage'
+  'httpport'    : 3000,
+  'httpsport'   : 3001,
+  'envName'     : 'Stage'
 }
 
 environments.production = {
-  'port'    : 5000,
-  'envName' : 'Prod'
+  'httpport'    : 5000,
+  'httpsport'   : 5001,
+  'envName'     : 'Prod'
 }
 
 //check current NODE_ENV input
